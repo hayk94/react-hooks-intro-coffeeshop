@@ -1,4 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
+import {useDocumentTittle, useLogger} from './hooker';
 
 const MenuFc = () => {
   const [selected, setSelected] = useState('Purple Haze');
@@ -17,14 +18,8 @@ const MenuFc = () => {
     }, 3000);
   };
 
-  useEffect(() => {
-    document.title = `Selected - ${selected}`;
-  }, [selected]);
-
-  useEffect(() => {
-    // eslint-disable-next-line
-    console.log('logger', selected, count);
-  });
+  useDocumentTittle(selected);
+  useLogger(selected, count);
 
   return (
     <div>
