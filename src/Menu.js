@@ -30,7 +30,9 @@ class Menu extends Component {
   }
 
   onOrder() {
-    alert(`You ordered ${this.state.count} ${this.state.selected}`);
+    setTimeout(() => {
+      alert(`You ordered ${this.state.count} ${this.state.selected}`);
+    }, 3000);
   }
 
   onCountChange(e) {
