@@ -5,25 +5,54 @@ class Menu extends Component {
     super(props);
     this.state = {
       selected: 'Purple Haze',
+      count: 0,
     };
+
+    this.onProductChange = this.onProductChange.bind(this);
+    this.onOrder = this.onOrder.bind(this);
+    this.onCountChange = this.onCountChange.bind(this);
   }
 
-  onChange(e) {
+  componentDidMount() {
+    document.title = `Selected - ${this.state.selected}`;
+  }
+
+  componentDidUpdate() {
+    document.title = `Selected - ${this.state.selected}`;
+  }
+
+  onProductChange(e) {
     this.setState({selected: e.target.value});
   }
 
   onOrder() {
-    alert(`You ordered ${this.state.selected}`);
+    alert(`You ordered ${this.state.count} ${this.state.selected}`);
   }
+
+  onCountChange(e) {
+    this.setState({count: e.target.value});
+  }
+
   render() {
     return (
       <div>
-        <b>Order: </b>
-        <select onChange={this.onChange}>
-          <option value="Purple Haze">Purple Haze</option>
-          <option value="Amnesia">Amnesia</option>
-          <option value="GoGreen">GoGreen</option>
-        </select>
+        <div>
+          <b>Product: </b>
+          <select onChange={this.onProductChange}>
+            <option value="Purple Haze">Purple Haze</option>
+            <option value="Amnesia">Amnesia</option>
+            <option value="GoGreen">GoGreen</option>
+          </select>
+        </div>
+        <div>
+          <b>Count: </b>
+          <input
+            type="number"
+            min={0}
+            value={this.state.count}
+            onChange={this.onCountChange}
+          />
+        </div>
         <div>
           <button onClick={this.onOrder}>Order</button>
         </div>
