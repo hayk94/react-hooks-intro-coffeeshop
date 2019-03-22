@@ -14,10 +14,14 @@ class Menu extends Component {
   }
 
   componentDidMount() {
+    // eslint-disable-next-line
+    console.log('logger', this.state, this.props);
     document.title = `Selected - ${this.state.selected}`;
   }
 
   componentDidUpdate() {
+    // eslint-disable-next-line
+    console.log('logger', this.state, this.props);
     document.title = `Selected - ${this.state.selected}`;
   }
 
