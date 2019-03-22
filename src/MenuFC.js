@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 const MenuFc = () => {
   const [selected, setSelected] = useState('Purple Haze');
-  const onProductChange = (e) => {
+  const onProductChange = e => {
     setSelected(e.target.value);
   };
 
   const [count, setCount] = useState(0);
-  const onCountChange = (e) => {
+  const onCountChange = e => {
     setCount(e.target.value);
   };
 
@@ -16,6 +16,12 @@ const MenuFc = () => {
       alert(`You ordered ${count} ${selected}`);
     }, 3000);
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line
+    console.log('logger', selected, count);
+    document.title = `Selected - ${selected}`;
+  });
 
   return (
     <div>
@@ -29,12 +35,7 @@ const MenuFc = () => {
       </div>
       <div>
         <b>Count: </b>
-        <input
-          type="number"
-          min={0}
-          value={count}
-          onChange={onCountChange}
-        />
+        <input type="number" min={0} value={count} onChange={onCountChange} />
       </div>
       <div>
         <button onClick={onOrder}>Order</button>
