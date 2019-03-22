@@ -18,9 +18,12 @@ const MenuFc = () => {
   };
 
   useEffect(() => {
+    document.title = `Selected - ${selected}`;
+  }, [selected]);
+
+  useEffect(() => {
     // eslint-disable-next-line
     console.log('logger', selected, count);
-    document.title = `Selected - ${selected}`;
   });
 
   return (
