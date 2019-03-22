@@ -30,8 +30,9 @@ class Menu extends Component {
   }
 
   onOrder() {
+    const {count, selected} = this.state;
     setTimeout(() => {
-      alert(`You ordered ${this.state.count} ${this.state.selected}`);
+      alert(`You ordered ${count} ${selected}`);
     }, 3000);
   }
 
