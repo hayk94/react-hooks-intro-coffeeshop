@@ -1,68 +1,37 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# React Hooks Re-intro
 
-## Available Scripts
+This repository is for React Hooks introduction.
 
-In the project directory, you can run:
+It consists of several numbered branches.  
+In each branch readme file goes over the code,  
+explaining the advantages and caveats.
 
-### `npm start`
+Here in the master branch is a plain [CRA](https://facebook.github.io/create-react-app/) app.  
+There are some additional configs for eslint using [eslint-config-fbjs](https://www.npmjs.com/package/eslint-config-fbjs)  
+with [eslint-plugin-react-hooks](https://www.npmjs.com/package/eslint-plugin-react-hooks).
+And prettier config.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Disclaimer**  
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Most stuff in this repo and posts have already been discussed,  
+by react team in the docs, by Dan Abramov in his amazing talk and blog,  
+and other people.
 
-### `npm test`
+This repo is just a summation of my knowledge about hooks I gathered so far.
+Just putting stuff in my own words.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+###### Resources
 
-### `npm run build`
+[https://reactjs.org/docs/hooks-intro.html]()
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+https://dev.to/dan_abramov/making-sense-of-react-hooks-2eib
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+https://overreacted.io/react-as-a-ui-runtime/
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+https://overreacted.io/making-setinterval-declarative-with-react-hooks/
 
-### `npm run eject`
+https://overreacted.io/how-are-function-components-different-from-classes/
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+https://overreacted.io/a-complete-guide-to-useeffect/
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+https://overreacted.io/writing-resilient-components/
