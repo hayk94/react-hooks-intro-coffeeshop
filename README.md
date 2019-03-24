@@ -1,68 +1,268 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## And now this!
 
-## Available Scripts
+So now we have an error! Or rather the error...
 
-In the project directory, you can run:
+You know it right?
 
-### `npm start`
+Let's fix it!
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```jsx harmony
+import React, {Component} from 'react';
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+class Menu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: 'Purple Haze',
+    };
+    this.onChange = this.onChange.bind(this);
+    this.onOrder = this.onOrder.bind(this);
+  }
 
-### `npm test`
+  onChange(e) {
+    this.setState({selected: e.target.value});
+  }
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  onOrder() {
+    alert(`You ordered ${this.state.selected}`);
+  }
+  render() {
+    return (
+      <div>
+        <b>Order: </b>
+        <select onChange={this.onChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+        <div>
+          <button onClick={this.onOrder}>Order</button>
+        </div>
+      </div>
+    );
+  }
+}
 
-### `npm run build`
+export default Menu;
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+We needed to `bind` `this`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### New Requirements
 
-### `npm run eject`
+Suddenly we got new requirements from the client...  
+They want the page title to be the selected item of the user.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+So we need something like this.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```jsx harmony
+import React, {Component} from 'react';
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+class Menu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: 'Purple Haze',
+    };
+    this.onChange = this.onChange.bind(this);
+    this.onOrder = this.onOrder.bind(this);
+  }
+  
+  componentDidUpdate() {
+    document.title = `Selected - ${this.state.selected}`;
+  }
+  
+  onChange(e) {
+    this.setState({selected: e.target.value});
+  }
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+  onOrder() {
+    alert(`You ordered ${this.state.selected}`);
+  }
+  render() {
+    return (
+      <div>
+        <b>Order: </b>
+        <select onChange={this.onChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+        <div>
+          <button onClick={this.onOrder}>Order</button>
+        </div>
+      </div>
+    );
+  }
+}
 
-## Learn More
+export default Menu;
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Lifecycle methods yay!  
+Now we got it once user selects an item the document title changes accordingly.
 
-### Code Splitting
+### Yet another requirement
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+And now we've been given another task based on the new requirements.
+Users should be able to tell us how many products they want to order.
 
-### Analyzing the Bundle Size
+Pretty easy, right?
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+```jsx harmony
+import React, {Component} from 'react';
 
-### Making a Progressive Web App
+class Menu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: 'Purple Haze',
+      count: 0,
+    };
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+    this.onProductChange = this.onProductChange.bind(this);
+    this.onOrder = this.onOrder.bind(this);
+    this.onCountChange = this.onCountChange.bind(this);
+  }
 
-### Advanced Configuration
+  componentDidUpdate() {
+    document.title = `Selected - ${this.state.selected}`;
+  }
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+  onProductChange(e) {
+    this.setState({selected: e.target.value});
+  }
 
-### Deployment
+  onOrder() {
+    alert(`You ordered ${this.state.count} ${this.state.selected}`);
+  }
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+  onCountChange(e) {
+    this.setState({count: e.target.value});
+  }
 
-### `npm run build` fails to minify
+  render() {
+    return (
+      <div>
+        <div>
+          <b>Product: </b>
+          <select onChange={this.onProductChange}>
+            <option value="Purple Haze">Purple Haze</option>
+            <option value="Amnesia">Amnesia</option>
+            <option value="GoGreen">GoGreen</option>
+          </select>
+        </div>
+        <div>
+          <b>Count: </b>
+          <input
+            type="number"
+            min={0}
+            value={this.state.count}
+            onChange={this.onCountChange}
+          />
+        </div>
+        <div>
+          <button onClick={this.onOrder}>Order</button>
+        </div>
+      </div>
+    );
+  }
+}
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+export default Menu;
+
+```
+
+We add a number `input`, `count` to our state, and an `onCountChange` method.  
+Oh and right, we need to `bind` `this`.
+
+Great we accomplished a lot today and feel proud.
+
+### Oh no, a bug was just reported
+
+Whoops... We just barely finished the previous task,  
+yet a bug was reported from our previous feature.
+
+They say when the users enter the page first time,
+the page title doesn't show the selected product.
+
+But it's not a bug! The user didn't select any product yet!  
+Oh really? It's a bug and you should fix it!
+
+Anyway it needs to be done.  
+So after thinking a while, the best place for this would be `componentDidMount`.  
+Yay another lifecycle method to the rescue!
+
+```jsx harmony
+import React, {Component} from 'react';
+
+class Menu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: 'Purple Haze',
+      count: 0,
+    };
+
+    this.onProductChange = this.onProductChange.bind(this);
+    this.onOrder = this.onOrder.bind(this);
+    this.onCountChange = this.onCountChange.bind(this);
+  }
+
+  componentDidMount() {
+    document.title = `Selected - ${this.state.selected}`;
+  }
+
+  componentDidUpdate() {
+    document.title = `Selected - ${this.state.selected}`;
+  }
+
+  onProductChange(e) {
+    this.setState({selected: e.target.value});
+  }
+
+  onOrder() {
+    alert(`You ordered ${this.state.count} ${this.state.selected}`);
+  }
+
+  onCountChange(e) {
+    this.setState({count: e.target.value});
+  }
+
+  render() {
+    return (
+      <div>
+        <div>
+          <b>Product: </b>
+          <select onChange={this.onProductChange}>
+            <option value="Purple Haze">Purple Haze</option>
+            <option value="Amnesia">Amnesia</option>
+            <option value="GoGreen">GoGreen</option>
+          </select>
+        </div>
+        <div>
+          <b>Count: </b>
+          <input
+            type="number"
+            min={0}
+            value={this.state.count}
+            onChange={this.onCountChange}
+          />
+        </div>
+        <div>
+          <button onClick={this.onOrder}>Order</button>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default Menu;
+
+```
+
+Phew... it's been a tough day, but we managed! Hooray!
+
+Turn to the next branch...
