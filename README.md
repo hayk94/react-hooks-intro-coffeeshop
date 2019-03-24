@@ -1,68 +1,95 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### App grows! Performance issues come up!
 
-## Available Scripts
+As our app grows, we are encountering some performance issues here and there.
 
-In the project directory, you can run:
+To identify them we start using some debugging tools.  
+So you decide to put some loggers in your `Menu.js`.
 
-### `npm start`
+```jsx harmony
+import React, {Component} from 'react';
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+class Menu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: 'Purple Haze',
+      count: 0,
+    };
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+    this.onProductChange = this.onProductChange.bind(this);
+    this.onOrder = this.onOrder.bind(this);
+    this.onCountChange = this.onCountChange.bind(this);
+  }
 
-### `npm test`
+  componentDidMount() {
+    // eslint-disable-next-line
+    console.log('logger', this.state, this.props);
+    document.title = `Selected - ${this.state.selected}`;
+  }
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  componentDidUpdate() {
+    // eslint-disable-next-line
+    console.log('logger', this.state, this.props);
+    document.title = `Selected - ${this.state.selected}`;
+  }
 
-### `npm run build`
+  onProductChange(e) {
+    this.setState({selected: e.target.value});
+  }
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  onOrder() {
+    alert(`You ordered ${this.state.count} ${this.state.selected}`);
+  }
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+  onCountChange(e) {
+    this.setState({count: e.target.value});
+  }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  render() {
+    return (
+      <div>
+        <div>
+          <b>Product: </b>
+          <select onChange={this.onProductChange}>
+            <option value="Purple Haze">Purple Haze</option>
+            <option value="Amnesia">Amnesia</option>
+            <option value="GoGreen">GoGreen</option>
+          </select>
+        </div>
+        <div>
+          <b>Count: </b>
+          <input
+            type="number"
+            min={0}
+            value={this.state.count}
+            onChange={this.onCountChange}
+          />
+        </div>
+        <div>
+          <button onClick={this.onOrder}>Order</button>
+        </div>
+      </div>
+    );
+  }
+}
 
-### `npm run eject`
+export default Menu;
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+So we put loggers in `componentDidUpdate` and `componentDidMount`.  
+Now you see the proper log after `componentDidMount`.  
+You select a product and see the proper log in `componentDidUpdate`, with new state and props.  
+You change the product count and see new state and props logged by `componentDidUpdate`.  
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+But wait a minute...  
+Doesn't that mean the `document.title = newTitle` code executes on every update,  
+even though the selected product didn't change?
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+We need to fix that. And this logger tool is really helpful we should implement it for other components too in our app.
 
-## Learn More
+So maybe we fix the issue with an `if` check. And make a `HOC` for the logger.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+As you are thinking about the solution a new high priority requirement arrives.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Turn to the next branch...
