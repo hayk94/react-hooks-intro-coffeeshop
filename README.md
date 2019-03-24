@@ -1,68 +1,90 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### New Requirement with lots async stuff
+So suddenly a new requirement arrives.  
+To implement it you added lots of async stuff to your on order function, so now it looks like this.
 
-## Available Scripts
+```jsx harmony
+import React, {Component} from 'react';
 
-In the project directory, you can run:
+class Menu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: 'Purple Haze',
+      count: 0,
+    };
 
-### `npm start`
+    this.onProductChange = this.onProductChange.bind(this);
+    this.onOrder = this.onOrder.bind(this);
+    this.onCountChange = this.onCountChange.bind(this);
+  }
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  componentDidMount() {
+    // eslint-disable-next-line
+    console.log('logger', this.state, this.props);
+    document.title = `Selected - ${this.state.selected}`;
+  }
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+  componentDidUpdate() {
+    // eslint-disable-next-line
+    console.log('logger', this.state, this.props);
+    document.title = `Selected - ${this.state.selected}`;
+  }
 
-### `npm test`
+  onProductChange(e) {
+    this.setState({selected: e.target.value});
+  }
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  onOrder() {
+    setTimeout(() => {
+      alert(`You ordered ${this.state.count} ${this.state.selected}`);
+    }, 3000);
+  }
 
-### `npm run build`
+  onCountChange(e) {
+    this.setState({count: e.target.value});
+  }
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  render() {
+    return (
+      <div>
+        <div>
+          <b>Product: </b>
+          <select onChange={this.onProductChange}>
+            <option value="Purple Haze">Purple Haze</option>
+            <option value="Amnesia">Amnesia</option>
+            <option value="GoGreen">GoGreen</option>
+          </select>
+        </div>
+        <div>
+          <b>Count: </b>
+          <input
+            type="number"
+            min={0}
+            value={this.state.count}
+            onChange={this.onCountChange}
+          />
+        </div>
+        <div>
+          <button onClick={this.onOrder}>Order</button>
+        </div>
+      </div>
+    );
+  }
+}
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+export default Menu;
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
 
-### `npm run eject`
+Everything seems to be working just fine, but then you get a bug report.  
+Wrong item is being ordered sometimes.  
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+After trying to reproduce it for a while, you find the problem!
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+When you order a product then select another product before the order message appeared,  
+you get a wrong product in the message as it appears.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Hmmm...
+Why that would happen? Nothing seems to be wrong with our code.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Turn to the next branch...
