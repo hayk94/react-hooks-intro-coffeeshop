@@ -1,68 +1,181 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Fucking bring hooks already!
 
-## Available Scripts
+Fine! Fine...
 
-In the project directory, you can run:
+So you heard about this next hot thing that's called hooks.  
+Now you want to refactor your `Menu.js` component to use hooks.  
+You were going to refactor it anyway because of performance issues in branch 3, so lets refactor straight to hooks.
 
-### `npm start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Create a new simple functional component `MenuFC.js`.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+```jsx harmony
+import React from 'react';
 
-### `npm test`
+const MenuFc = () => {
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <button>Order</button>
+      </div>
+    </div>
+  );
+};
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+export default MenuFc;
+```
 
-### `npm run build`
+So plain and beautiful. Simple function that returns some jsx.  
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Now what do you think, wouldn't it be nice if we could do something like this?
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+```jsx harmony
+import React from 'react';
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const MenuFc = () => {
+  const state = 'Purple Haze';
+  
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select value={state}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <button>Order</button>
+      </div>
+    </div>
+  );
+};
 
-### `npm run eject`
+export default MenuFc;
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Wow, our state to be a simple variable in function scope. That's crazy man!  
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+But we need to somehow be able to change it, right? Otherwise it's not useful as state.  
+Imagine if we had `setState` as simple function in scope.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```jsx harmony
+<select onChange={setState} value={state}>
+  <option value="Purple Haze">Purple Haze</option>
+  <option value="Amnesia">Amnesia</option>
+  <option value="GoGreen">GoGreen</option>
+</select>
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+What do you think? It's so nice and clean.  
+So how do we accomplish this with hooks?
 
-## Learn More
+```jsx harmony
+import React, {useState} from 'react';
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+const MenuFc = () => {
+  const [selected, setSelected] = useState('Purple Haze');
+  const onProductChange = (e) => {
+    setSelected(e.target.value);
+  };
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select onChange={onProductChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <button>Order</button>
+      </div>
+    </div>
+  );
+};
 
-### Code Splitting
+export default MenuFc;
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+```
 
-### Analyzing the Bundle Size
+I know what you are thinking. "I liked you at first, but now, what kind of black magic is this?"  
+```js
+const [selected, setSelected] = useState('Purple Haze');
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+Please just give me a moment. It is a simple [ES6 Array Destructuring](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Array_destructuring).  
+You learnt the big and verbose class syntax, surely this tiny syntax won't hurt you.
 
-### Making a Progressive Web App
+#### Now let's look at benefits
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+Our `selected` and `setSelected` are just plain variables in our function scope.  
 
-### Advanced Configuration
+`useState` function imported from `react` gets one argument - the initial state.
+It returns an array.  
+The first element is the value of our state.  
+The second is a function to change the value.  
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+We use that function to create a callback to execute when a user selects different product.
 
-### Deployment
+So take a look at this beauty once more.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+```jsx harmony
+import React, {useState} from 'react';
 
-### `npm run build` fails to minify
+const MenuFc = () => {
+  const [selected, setSelected] = useState('Purple Haze');
+  const onProductChange = (e) => {
+    setSelected(e.target.value);
+  };
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select onChange={onProductChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <button>Order</button>
+      </div>
+    </div>
+  );
+};
+
+export default MenuFc;
+
+```
+
+"But creating you are creating a new callback function on each render, it's bad for performance!".  
+Some of you might say.  
+Well it turns out... [No.](https://reactjs.org/docs/hooks-faq.html#are-hooks-slow-because-of-creating-functions-in-render)
+
+[Here is what react official docs say about that.](https://reactjs.org/docs/hooks-faq.html#are-hooks-slow-because-of-creating-functions-in-render)
+
+> No. In modern browsers, the raw performance of closures compared to classes doesn’t differ significantly except in extreme scenarios
+
+Moreover
+
+> Hooks avoid a lot of the overhead that classes require, like the cost of creating class instances and binding event handlers in the constructor.
+
+So if we just separate out politics from these sentences, the raw meaning strictly equals  
+
+_As React components classes do so much shit that if we just throw them away and use functions,  
+we get a lot of performance benefit compared to which creating a new callback function at every render at most cases is nothing_
+
+And you can find some performance tips and trick mentioned there. We'll dive into these later.
+
