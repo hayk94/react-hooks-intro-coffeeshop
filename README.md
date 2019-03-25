@@ -151,12 +151,12 @@ So we solved the `this` problem by function scope.
 
 One way that I find easy to think about the `this` and function scope, is to think about them like dimensions.
 
-![dimensions](https://imgur.com/M3HJ0lY)
+![dimensions](https://i.imgur.com/M3HJ0lY.png)
 
 We have these 2 dimensions where we store our data.
 
 The `this` can change during the scope.
 
-![dimensions](https://imgur.com/gFhXEH1)
+![dimensions](https://i.imgur.com/gFhXEH1.png)
 
 So you need to be aware of the 2 dimensions where our data reside. And how they interact. 
