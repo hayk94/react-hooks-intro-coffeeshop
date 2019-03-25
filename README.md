@@ -1,68 +1,162 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Ugh not this again!
 
-## Available Scripts
+So why that bug happens?
 
-In the project directory, you can run:
+To give you a hint, lets take a look at the solution first.
 
-### `npm start`
+```jsx harmony
+import React, {Component} from 'react';
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+class Menu extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: 'Purple Haze',
+      count: 0,
+    };
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+    this.onProductChange = this.onProductChange.bind(this);
+    this.onOrder = this.onOrder.bind(this);
+    this.onCountChange = this.onCountChange.bind(this);
+  }
 
-### `npm test`
+  componentDidMount() {
+    // eslint-disable-next-line
+    console.log('logger', this.state, this.props);
+    document.title = `Selected - ${this.state.selected}`;
+  }
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  componentDidUpdate() {
+    // eslint-disable-next-line
+    console.log('logger', this.state, this.props);
+    document.title = `Selected - ${this.state.selected}`;
+  }
 
-### `npm run build`
+  onProductChange(e) {
+    this.setState({selected: e.target.value});
+  }
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  onOrder() {
+    const {count, selected} = this.state;
+    setTimeout(() => {
+      alert(`You ordered ${count} ${selected}`);
+    }, 3000);
+  }
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+  onCountChange(e) {
+    this.setState({count: e.target.value});
+  }
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  render() {
+    return (
+      <div>
+        <div>
+          <b>Product: </b>
+          <select onChange={this.onProductChange}>
+            <option value="Purple Haze">Purple Haze</option>
+            <option value="Amnesia">Amnesia</option>
+            <option value="GoGreen">GoGreen</option>
+          </select>
+        </div>
+        <div>
+          <b>Count: </b>
+          <input
+            type="number"
+            min={0}
+            value={this.state.count}
+            onChange={this.onCountChange}
+          />
+        </div>
+        <div>
+          <button onClick={this.onOrder}>Order</button>
+        </div>
+      </div>
+    );
+  }
+}
 
-### `npm run eject`
+export default Menu;
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+So we only changed this piece.
+```js
+  onOrder() {
+    const {count, selected} = this.state;
+    setTimeout(() => {
+      alert(`You ordered ${count} ${selected}`);
+    }, 3000);
+  }
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Just one line of code fixes our issue.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Let's dive deep and understand what happens here.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+#### The "this" is mutable
 
-## Learn More
+```js
+  onOrder() {
+    setTimeout(() => {
+      alert(`You ordered ${this.state.count} ${this.state.selected}`);
+    }, 3000);
+  }
+```
+Let's take a look at this buggy code first.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+We select a product - "GoGreen". State changes to it. Component re-renders.  
+`this.state.selected === "GoGreen"`  
+Click the order button. The `onOrder` method fires.  
+`setTimeout` starts. 3 seconds pass. The callback is executed.  
+We read `this.state.selected` and get "GoGreen".
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Here everything is working great. Now let's see how the bug happens.
 
-### Code Splitting
+We select a product - "Amnesia". State changes to it. Component re-renders.  
+`this.state.selected === "Amnesia"`  
+Click the order button. The `onOrder` method fires.  
+`setTimeout` starts. **Before** 3 seconds pass, we select another product - "GoGreen".  
+State changes to it. Component re-renders.  
+`this.state.selected === "GoGreen"`  
+3 seconds pass. `setTimeout` callback runs. We read `this.state.selected` and get "GoGreen".  
+However this time we clicked the order button when we selected the "Amnesia" product.  
+The problem here is the `this`. It changes during the scope of the `onOrder`.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+##### Solution
 
-### Analyzing the Bundle Size
+Now let's take a look at the solution.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+ ```js
+   onOrder() {
+     const {count, selected} = this.state;
+     setTimeout(() => {
+       alert(`You ordered ${count} ${selected}`);
+     }, 3000);
+   }
+ ```
+ 
+ We select a product - "Amnesia". State changes to it. Component re-renders.  
+ `this.state.selected === "Amnesia"`  
+ Click the order button. The `onOrder` method fires. 
+ We read the `this.state.selected` and assign it to the new variable `selected` in the function scope.  
+ `selected === "Amnesia"` 
+ `setTimeout` starts. **Before** 3 seconds pass, we select another product - "GoGreen".  
+ State changes to it. Component re-renders.  
+ `this.state.selected === "GoGreen"`  
+ 3 seconds pass. `setTimeout` callback runs. We read the `selected` of the function scope not from the `this`. And get "Amnesia".  
+The `this` changed/mutated but function scope and variables in it were still the same.
 
-### Making a Progressive Web App
+So we solved the `this` problem by function scope.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+#### 2 Dimensions
 
-### Advanced Configuration
+One way that I find easy to think about the `this` and function scope, is to think about them like dimensions.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+![dimensions](https://imgur.com/M3HJ0lY)
 
-### Deployment
+We have these 2 dimensions where we store our data.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+The `this` can change during the scope.
 
-### `npm run build` fails to minify
+![dimensions](https://imgur.com/gFhXEH1)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+So you need to be aware of the 2 dimensions where our data reside. And how they interact. 
