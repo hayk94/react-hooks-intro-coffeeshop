@@ -143,7 +143,7 @@ const MenuFc = () => {
     <div>
       <div>
         <b>Product: </b>
-        <select onChange={onProductChange}>
+        <select value={selected} onChange={onProductChange}>
           <option value="Purple Haze">Purple Haze</option>
           <option value="Amnesia">Amnesia</option>
           <option value="GoGreen">GoGreen</option>
@@ -177,5 +177,115 @@ So if we just separate out politics from these sentences, the raw meaning strict
 _As React components classes do so much shit that if we just throw them away and use functions,  
 we get a lot of performance benefit compared to which creating a new callback function at every render at most cases is nothing_
 
-And you can find some performance tips and trick mentioned there. We'll dive into these later.
+And you can find some performance tips and tricks mentioned there. We'll dive into these later.
 
+Now let's add the ordering functionality.
+
+```jsx harmony
+import React, {useState} from 'react';
+
+const MenuFc = () => {
+  const [selected, setSelected] = useState('Purple Haze');
+  const onProductChange = (e) => {
+    setSelected(e.target.value);
+  };
+
+  const onOrder = () => {
+      setTimeout(() => {
+        alert(`You ordered ${count} ${selected}`);
+      }, 3000);
+    };
+
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select value={selected} onChange={onProductChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <button onClick={onOrder}>Order</button>
+      </div>
+    </div>
+  );
+};
+
+export default MenuFc;
+
+```
+Again. Simple as that, just a plain function.  
+Notice in this case we don't need to put the `onOrder` in the component scope.  
+We can declare it outside and use it inside the component by passing arguments.
+
+```js
+const onOrder = (count, selected) => {
+  setTimeout(() => {
+    alert(`You ordered ${count} ${selected}`);
+  }, 3000);
+};
+
+```
+
+Here is another great thing about hooks. You can have as many of them as you'd like.  
+Let's implement the count.
+
+```jsx harmony
+import React, {useState} from 'react';
+
+const MenuFc = () => {
+  const [selected, setSelected] = useState('Purple Haze');
+  const onProductChange = (e) => {
+    setSelected(e.target.value);
+  };
+
+  const [count, setCount] = useState(0);
+  const onCountChange = (e) => {
+    setCount(e.target.value);
+  };
+
+  const onOrder = () => {
+    setTimeout(() => {
+      alert(`You ordered ${count} ${selected}`);
+    }, 3000);
+  };
+
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select onChange={onProductChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <b>Count: </b>
+        <input
+          type="number"
+          min={0}
+          value={count}
+          onChange={onCountChange}
+        />
+      </div>
+      <div>
+        <button onClick={onOrder}>Order</button>
+      </div>
+    </div>
+  );
+};
+
+export default MenuFc;
+
+```
+
+What a beauty! And we don't have any `this` problems.  
+No bindings! No async bugs! Now it's just a plain function and only a scope.
+
+![One Dimension Only](https://i.imgur.com/aqY05Tz.png)
+
+Now let's get acquainted with the next hook.
+Turn to the next branch.
