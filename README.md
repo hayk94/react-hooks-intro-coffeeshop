@@ -1,68 +1,147 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Side effects!
 
-## Available Scripts
+Where did we perform side effects in class components?  
+Lifecycle methods.
 
-In the project directory, you can run:
+To perform side effects in functional components now we have `useEffect`.
 
-### `npm start`
+In our `Menu.js` class component we have a side effect for changing our document title.  
+Here is how we do it in `MenuFC.js`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```jsx harmony
+import React, {useState, useEffect} from 'react';
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+const MenuFc = () => {
+  const [selected, setSelected] = useState('Purple Haze');
+  const onProductChange = e => {
+    setSelected(e.target.value);
+  };
 
-### `npm test`
+  const [count, setCount] = useState(0);
+  const onCountChange = e => {
+    setCount(e.target.value);
+  };
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  const onOrder = () => {
+    setTimeout(() => {
+      alert(`You ordered ${count} ${selected}`);
+    }, 3000);
+  };
 
-### `npm run build`
+  useEffect(() => {
+    document.title = `Selected - ${selected}`;
+  });
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select onChange={onProductChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <b>Count: </b>
+        <input type="number" min={0} value={count} onChange={onCountChange} />
+      </div>
+      <div>
+        <button onClick={onOrder}>Order</button>
+      </div>
+    </div>
+  );
+};
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+export default MenuFc;
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```
 
-### `npm run eject`
+`useEffect` accepts a function as an argument.  
+There we perform our side effects.  
+It runs on every render.
+It behaves
+> as componentDidMount, componentDidUpdate, and componentWillUnmount combined.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+https://reactjs.org/docs/hooks-effect.html
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+We also had a logger in our class component. Let's add it.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```jsx harmony
+import React, {useState, useEffect} from 'react';
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+const MenuFc = () => {
+  const [selected, setSelected] = useState('Purple Haze');
+  const onProductChange = e => {
+    setSelected(e.target.value);
+  };
 
-## Learn More
+  const [count, setCount] = useState(0);
+  const onCountChange = e => {
+    setCount(e.target.value);
+  };
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  const onOrder = () => {
+    setTimeout(() => {
+      alert(`You ordered ${count} ${selected}`);
+    }, 3000);
+  };
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  useEffect(() => {
+    // eslint-disable-next-line
+    console.log('logger', selected, count);
+    document.title = `Selected - ${selected}`;
+  });
 
-### Code Splitting
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select onChange={onProductChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <b>Count: </b>
+        <input type="number" min={0} value={count} onChange={onCountChange} />
+      </div>
+      <div>
+        <button onClick={onOrder}>Order</button>
+      </div>
+    </div>
+  );
+};
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+export default MenuFc;
 
-### Analyzing the Bundle Size
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+Everything looks great right? Before we go deeper one thing...
 
-### Making a Progressive Web App
+### useEffect is a whole new concept
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+Do not think of `useEffect` as a new lifecycle method.  
+It's a whole new concept.
 
-### Advanced Configuration
+It's not a lifecycle method, it behaves similar to them.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+`useEffect` timing is different.  
 
-### Deployment
+https://reactjs.org/docs/hooks-reference.html#timing-of-effects
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+##### Old problems
 
-### `npm run build` fails to minify
+In our class component we had a few issues.  
+As state changes our component re-renders.  
+`componentDidUpdate` fires and `document.title = this.state.selected` was running,  
+even though we changed only the count and not the title. With classes we'd put some if check.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Also we wanted to make our logger functionality reusable. With classes we'd make a HOC.
+
+The same problems we have now here with our `useEffect` hook.  
+At the moment it's as bad as lifecycle methods.
+
+Let's see how it's actually better.  
+Turn to the next branch.
