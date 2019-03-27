@@ -1,68 +1,95 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Re-usable hooks
 
-## Available Scripts
+Let's dive right into coding.
 
-In the project directory, you can run:
+We create a new `hooker.js` file.
 
-### `npm start`
+```jsx harmony
+import {useEffect} from 'react';
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+// updateDocumentTitle name is bad the custom hook name should start with "use"
+export const useDocumentTittle = title => {
+  useEffect(() => {
+    document.title = title;
+  }, [title]);
+};
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+export const useLogger = (...args) => {
+  useEffect(() => {
+    // eslint-disable-next-line
+    console.log('logger', ...args);
+  });
+};
 
-### `npm test`
+```
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Then we do this in our `MenuFC.js`
 
-### `npm run build`
+```jsx harmony
+import React, {useState} from 'react';
+import {useDocumentTittle, useLogger} from './hooker';
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+const MenuFc = () => {
+  const [selected, setSelected] = useState('Purple Haze');
+  const onProductChange = e => {
+    setSelected(e.target.value);
+  };
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+  const [count, setCount] = useState(0);
+  const onCountChange = e => {
+    setCount(e.target.value);
+  };
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  const onOrder = () => {
+    setTimeout(() => {
+      alert(`You ordered ${count} ${selected}`);
+    }, 3000);
+  };
 
-### `npm run eject`
+  useDocumentTittle(`Selected - ${selected}`);
+  useLogger(selected, count);
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+  return (
+    <div>
+      <div>
+        <b>Product: </b>
+        <select onChange={onProductChange}>
+          <option value="Purple Haze">Purple Haze</option>
+          <option value="Amnesia">Amnesia</option>
+          <option value="GoGreen">GoGreen</option>
+        </select>
+      </div>
+      <div>
+        <b>Count: </b>
+        <input type="number" min={0} value={count} onChange={onCountChange} />
+      </div>
+      <div>
+        <button onClick={onOrder}>Order</button>
+      </div>
+    </div>
+  );
+};
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+export default MenuFc;
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+That's right!
+Now we can use any of these hooks in any **React Functional Component**.
 
-## Learn More
+That's how simple sharing logic can be.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Some general rules for hooks
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Remember that custom hooks should be named as native hooks. The **use** word should be **used**.
 
-### Code Splitting
+Hooks cannot be in conditions. But you can have conditions in your `useEffect` callback
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+And so on... You definitely should check [eslint-plugin-react-hooks](https://www.npmjs.com/package/eslint-plugin-react-hooks) 
 
-### Analyzing the Bundle Size
+### To be continued...
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+And that's it for hooks intro!  
+Soon I'll dive deeper into more specific cases...  
+So keep up with me!
+See you soon!
