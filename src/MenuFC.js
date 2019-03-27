@@ -18,7 +18,7 @@ const MenuFc = () => {
     }, 3000);
   };
 
-  useDocumentTittle(selected);
+  useDocumentTittle(`Selected - ${selected}`);
   useLogger(selected, count);
 
   return (

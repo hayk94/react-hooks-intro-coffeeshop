@@ -3,7 +3,7 @@ import {useEffect} from 'react';
 // updateDocumentTitle name is bad the custom hook name should start with "use"
 export const useDocumentTittle = title => {
   useEffect(() => {
-    document.title = `Selected - ${title}`;
+    document.title = title;
   }, [title]);
 };
 
